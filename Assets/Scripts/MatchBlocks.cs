@@ -19,6 +19,7 @@ public class MatchBlocks : MonoBehaviour
         movePos = transform.position;
     }
 
+    // add blocks to gameplay manager when they are added to the scene
     void OnValidate()
     {
         if (gm == null)
@@ -30,11 +31,14 @@ public class MatchBlocks : MonoBehaviour
             }
         }
 
-        if (gm != null && notAdded && !gm.hasBlock(this.name)) {
+        if (gm != null && notAdded && !gm.hasBlock(this.name))
+        {
             gm.blocks.Add(this);
+            notAdded = false;
         }
     }
 
+    // remove block from gameplay manager when removed from scene
     void OnDestroy() {
         //do this when more spoons
     }
@@ -42,41 +46,50 @@ public class MatchBlocks : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position != movePos) {
-            if (!iAmMoving) {
+        // I need to move to match my world coordinates
+        if (transform.position != movePos)
+        {
+            if (!iAmMoving)
+            {
                 gm.blocksAreMoving++;
                 iAmMoving = true;
             }
             transform.position = Vector3.MoveTowards(transform.position, movePos, gm.getSpeed() * Time.deltaTime);
-            if (transform.position == movePos && iAmMoving) {
+            if (transform.position == movePos && iAmMoving)
+            {
                 iAmMoving = false;
                 gm.blocksAreMoving--;
             }
         }
     }
 
+    // set a new position in the coordinate system
     public Vector3 GetXYZ()
     {
         return movePos;
     }
 
+    // set block position on the coordinate grid
     public void SetXYZ(Vector3 pos)
     {
         movePos = pos;
     }
 
+    // get this block's sprite name
     public string GetSpriteName()
     {
         return this.GetComponent<SpriteRenderer>().sprite.name;
     }
 
-    public Vector3 PushBlock(Vector3 dir)
+    // move block in specified direction by 1 unit vector length
+    public Vector3Int PushBlock(Vector3Int dir)
     {
         movePos += dir;
-        gm.UpdateBlock(transform.position, this);
-        return GetXYZ();
+        gm.UpdateBlock(gm.Integerize(transform.position), this);
+        return gm.Integerize(GetXYZ());
     }
 
+    // hide the block and remove it from play after it was matched
     public void ChangeVisibility()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();

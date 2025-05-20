@@ -18,6 +18,7 @@ public class MusicClass : GenericSingleton<MusicClass>
         _audioSource = GetComponent<AudioSource>();
     }
 
+    // set a flag as o whether or not the player is focused on the game
     void OnApplicationFocus(bool b)
     {
         //Debug.Log("application focus: " + b);
@@ -27,17 +28,24 @@ public class MusicClass : GenericSingleton<MusicClass>
  // Update is called once per frame
     void Update()
     {
+        // play music 
         if (isFocused && !_audioSource.isPlaying)
             playNextMusic();
     }
 
+    // cycle music
     private void playNextMusic()
     {
-        if (_audioSource.clip == AudioClip1) {
+        if (_audioSource.clip == AudioClip1)
+        {
             _audioSource.clip = AudioClip2;
-        } else if (_audioSource.clip == AudioClip2) {
+        }
+        else if (_audioSource.clip == AudioClip2)
+        {
             _audioSource.clip = AudioClip3;
-        } else if (_audioSource.clip == AudioClip3) {
+        }
+        else if (_audioSource.clip == AudioClip3)
+        {
             _audioSource.clip = AudioClip1;
         }
         PlayMusic();
